@@ -23,7 +23,9 @@ class CommentBox extends Component {
   }
 
   componentWillUnmount() {
-    if (this.pollInterval) clearInterval(this.pollInterval);
+    if (this.pollInterval) {
+      clearInterval(this.pollInterval);
+    }
     this.pollInterval = null;
   }
 
@@ -31,8 +33,15 @@ class CommentBox extends Component {
     fetch("/api/comments/") // fetch returns a promise
       .then(data => data.json())
       .then(res => {
-        if (!res.success) this.setState({ error: res.error });
-        else this.setState({ data: res.data });
+        if (!res.success) {
+          this.setState({
+            error: res.error
+          });
+        } else {
+          this.setState({
+            data: res.data
+          });
+        }
       });
   };
 
@@ -44,12 +53,12 @@ class CommentBox extends Component {
 
   submitComment = e => {
     e.preventDefault();
-    const { author, comment } = this.state;
-    if (!author || !comment) return;
+    const { author, text } = this.state;
+    if (!author || !text) return;
     fetch("/api/comments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ author, comment })
+      body: JSON.stringify({ author, text })
     })
       .then(res => res.json())
       .then(res => {
