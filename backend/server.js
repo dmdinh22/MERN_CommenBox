@@ -28,6 +28,7 @@ router.get('/', (req, res) => {
     res.json({ message: 'Hello, World!' });
 });
 
+// GET comments
 router.get('/comments', (req, res) => {
     Comment.find((err, comments) => {
         if (err) {
@@ -43,6 +44,7 @@ router.get('/comments', (req, res) => {
     });
 });
 
+// POST comments
 router.post('/comments', (req, res) => {
     const comment = new Comment();
     // body parser lets us use the req.body
@@ -67,6 +69,35 @@ router.post('/comments', (req, res) => {
     });
 });
 
+// PUT comment
+router.put('/comments/:commentId', (req, res) => {
+    const { commentId } = req.params;
+    if (!commentId) {
+        return res.json({ success: false, error: 'No comment id provided' });
+    }
+    Comment.findById(commentId, (error, comment) => {
+        if (error) return res.json({ success: false, error });
+        const { author, text } = req.body;
+        if (author) comment.author = author;
+        if (text) comment.text = text;
+        comment.save(error => {
+            if (error) return res.json({ success: false, error });
+            return res.json({ success: true });
+        });
+    });
+});
+
+// DELETE comment
+router.delete('/comments/:commentId', (req, res) => {
+    const { commentId } = req.params;
+    if (!commentId) {
+        return res.json({ success: false, error: 'No comment id provided' });
+    }
+    Comment.remove({ _id: commentId }, (error, comment) => {
+        if (error) return res.json({ success: false, error });
+        return res.json({ success: true });
+    });
+});
 // use router configuration
 app.use('/api', router);
 

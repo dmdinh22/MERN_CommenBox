@@ -54,7 +54,9 @@ class CommentBox extends Component {
   submitComment = e => {
     e.preventDefault();
     const { author, text } = this.state;
-    if (!author || !text) return;
+    if (!author || !text) {
+      return;
+    }
     fetch("/api/comments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -62,9 +64,15 @@ class CommentBox extends Component {
     })
       .then(res => res.json())
       .then(res => {
-        if (!res.success)
+        if (!res.success) {
           this.setState({ error: res.error.message || res.error });
-        else this.setState({ author: "", text: "", error: null });
+        } else {
+          this.setState({
+            author: "",
+            text: "",
+            error: null
+          });
+        }
       });
   };
 
